@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Player {{id}}</title>
+  </head>
+  <body>
+    <h1>Batthleship player</h1>
+
+    <div id="select_board"></div>
+
+    <div id="attack_board"></div>
+
+    <button onclick="onAttack({{id}}, 1,2)">Atacar</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+    <script src="{{url_for('static', filename='createBoard.js')}}"></script>
+    <script src="{{url_for('static', filename='socket.js')}}"></script>
+    <script>
+      initSocket({{id}});
+      fillSellectBoard({{id}}, 3,3);
+      fillAttackBoard({{id}}, 3,3);
+    </script>
+  </body>
+</html>

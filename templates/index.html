@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Battleship</title>
+  </head>
+  <body>
+    <h1>WebSocket con Flask</h1>
+
+    <a id="join_game_link" href="#" target="_blank">Join Game</a>
+
+    <div id="score"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
+    <script>
+      const joinGameUrl =
+        "http://" + document.domain + ":" + location.port + "/player";
+      console.log(joinGameUrl);
+      const anchor = document.getElementById("join_game_link");
+      anchor.href = joinGameUrl;
+      var socket = io.connect(
+        "http://" + document.domain + ":" + location.port
+      );
+
+      socket.on("connect", function () {
+        console.log("Conectado al servidor WebSocket");
+      });
+
+      socket.on("update/score", function (data) {
+        updatePlayersUI(data);
+      });
+
+      socket.on("update/players", function (data) {
+        updatePlayersUI(data);
+      });
+
+      const updatePlayersUI = (data) => {
+        const scoreDoc = document.getElementById("score");
+        scoreDoc.innerHTML = "";
+        data.forEach(({ id, score }) => {
+          console.log("in for each", id, score);
+          scoreDoc.innerHTML +=
+            "<p>" + "Player " + id + " score: " + score + "</p>";
+        });
+      };
+    </script>
+  </body>
+</html>
