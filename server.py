@@ -16,7 +16,6 @@ game=[
   # }
 ]
 app = Flask(__name__)
-# app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 
@@ -47,12 +46,12 @@ def handle_attack(message):
   print('Mensaje recibido de attack', x,y,id)
   on_player_attack(x,y,id)
   emit('update/score', game, broadcast=True)
+  emit('update/attack', {"x":x, "y":y, "id": id}, broadcast=True)
 
 @socketio.on('connected/boats')
 def handle_boats(message):
   boats, id = message["boats"],message["id"]
   on_send_boats(id, boats)
-  emit('update/score', game, broadcast=True)
 
 def on_send_boats(id, boats):
   update_game_field_by_id(id, "boats", boats)

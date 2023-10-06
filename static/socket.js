@@ -7,6 +7,14 @@ const initSocket = (id) => {
   socket.on("connect", function () {
     socket.emit("connected/player", id)
   });
+
+  socket.on("update/attack", function (data) {
+    const {x,y,id: attackId} = data;
+    console.log("In update/attack -------->", data);
+    if (attackId != id){
+      onAttackReceived(x,y);
+    }
+  });
 }
 
 function onAttack(id, x, y) {
