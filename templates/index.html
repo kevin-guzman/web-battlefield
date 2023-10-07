@@ -8,6 +8,7 @@
 
     <a id="join_game_link" href="#" target="_blank">Join Game</a>
 
+    <button onclick="onSendEmail()">Enviar correo</button>
     <div id="score"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
@@ -41,6 +42,10 @@
           scoreDoc.innerHTML +=
             "<p>" + "Player " + id + " score: " + score + "</p>";
         });
+      };
+
+      const onSendEmail = () => {
+        fetch("http://" + document.domain + ":" + location.port+"/send/email")
       };
     </script>
   </body>

@@ -1,11 +1,13 @@
 let socket;
-const initSocket = (id) => {
+const initSocket = (id, i,j) => {
   socket = io.connect(
     "http://" + document.domain + ":" + location.port
   );
 
   socket.on("connect", function () {
+    console.log("in on connect--->");
     socket.emit("connected/player", id)
+    resetAllBoards()
   });
 
   socket.on("update/attack", function (data) {

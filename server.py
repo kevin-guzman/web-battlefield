@@ -1,6 +1,8 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit, send
 import utils
+import db
+import mail
 
 
 game=[
@@ -17,7 +19,14 @@ game=[
 ]
 app = Flask(__name__)
 socketio = SocketIO(app)
+max_score = 0
 
+
+@app.route('/send/email')
+def send_email():
+  print("innsend mail")
+  on_send_email()
+  return ""
 
 @app.route('/player')
 def player_page():
@@ -26,12 +35,10 @@ def player_page():
 
 @app.route('/')
 def index():
+  global game
+  game=[]
   return render_template('index.html', players_length=1)
 
-
-@socketio.on('message')
-def handle_message(message):
-  print('Mensaje recibido: ' + message)
 
 @socketio.on('connected/player')
 def handle_connected_player(message):
@@ -54,6 +61,8 @@ def handle_boats(message):
   on_send_boats(id, boats)
 
 def on_send_boats(id, boats):
+  global max_score
+  max_score = len(boats)
   update_game_field_by_id(id, "boats", boats)
 
 def update_game_field_by_id(id, fieldName, value):
@@ -64,6 +73,13 @@ def update_game_field_by_id(id, fieldName, value):
       continue
     game[i][fieldName]= value
 
+def on_player_wins(id):
+  print("player wins ->", id)
+  db.save_scores(game)
+
+def on_send_email():
+  mail.send_results(db.get_scores())
+
 def on_player_acert_attack(id):
   global game
   for i,g in enumerate(game):
@@ -72,6 +88,9 @@ def on_player_acert_attack(id):
     if current_id != id:
       continue
     game[i]["score"]= current_score+1
+    # db.save_scores(game)
+    if current_score+1 == max_score or current_score+1%max_score==0:
+      on_player_wins(id)
 
 def on_player_attack(x,y,id):
   for g in game:

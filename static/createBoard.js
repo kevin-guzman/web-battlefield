@@ -2,14 +2,15 @@ function createEmptyMatrix(i, j) {
   return Array.from({ length: i }, () => Array(j).fill(0));
 }
 
-const boats = [];
+let boats = [];
 let movements = 0;
 const fillSellectBoard = (id, i, j) => {
   const maxMovements = Math.round(i / 2);
-  const selectBoard = document.getElementById("select_board")
+  const selectBoard = document.getElementById("select_board");
 
   const sendButton = document.createElement('button')
   sendButton.textContent = "Send board"
+  sendButton.id = "send_button"
   sendButton.disabled = true
   sendButton.onclick = () => {
     onSendBoats(id, boats)
@@ -22,7 +23,8 @@ const fillSellectBoard = (id, i, j) => {
       button.textContent = '🌊'
       button.id = `attack_button_i:${i}_j:${j}`
       button.onclick = () => {
-        if (movements > maxMovements) {
+        const alreadyExistBoat = boats.findIndex(({ x, y }) => x == i && y == j) != -1
+        if (movements > maxMovements || alreadyExistBoat) {
           return;
         }
 
@@ -42,15 +44,18 @@ const fillSellectBoard = (id, i, j) => {
           sendButton.disabled = false
         }
       }
+
       selectBoard.appendChild(button)
     })
     selectBoard.appendChild(document.createElement("br"))
   })
 
+  if (!document.getElementById("send_button")) {
+    selectBoard.appendChild(document.createElement("br"))
+    selectBoard.appendChild(sendButton)
+    selectBoard.appendChild(document.createElement("br"))
+  }
 
-  selectBoard.appendChild(document.createElement("br"))
-  selectBoard.appendChild(sendButton)
-  selectBoard.appendChild(document.createElement("br"))
 }
 
 const fillAttackBoard = (id, i, j) => {
@@ -70,6 +75,14 @@ const fillAttackBoard = (id, i, j) => {
   attackBoard.appendChild(document.createElement("br"))
 }
 
+const resetAllBoards = (i, j) => {
+  movements = 0;
+  boats = [];
+
+  fillAttackBoard(i, j)
+  fillSellectBoard(i, j)
+}
+
 const onAttackReceived = (i, j) => {
   const attackedButton = document.getElementById(`attack_button_i:${i}_j:${j}`)
   const prevColor = attackedButton.style.background;
@@ -81,5 +94,5 @@ const onAttackReceived = (i, j) => {
 }
 
 const updateButonColor = (button, color) => {
-  button.style.background=color;
+  button.style.background = color;
 }
